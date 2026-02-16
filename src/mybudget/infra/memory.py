@@ -10,3 +10,9 @@ class InMemoryTransactionRepository:
 
     def filter_by_type(self, type_):
         return [t for t in self._transactions if t.type == type_]
+
+    def update(self, id_, **kwargs):
+        for t in self._transactions:
+            if t.id == id_:
+                for key, value in kwargs.items():
+                    setattr(t, key, value)
