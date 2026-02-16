@@ -18,3 +18,12 @@ def test_filter_by_type():
     expenses = repo.filter_by_type("expense")
 
     assert len(expenses) == 1
+
+def test_update_transaction():
+    repo = InMemoryTransactionRepository()
+    t = Transaction(1, 10, "Old", date.today(), "expense")
+    repo.add(t)
+
+    repo.update(1, amount=20)
+
+    assert repo.list()[0].amount == 20
