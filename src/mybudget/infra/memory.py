@@ -7,3 +7,6 @@ class InMemoryTransactionRepository:
 
     def list(self):
         return self._transactions
+
+    def filter_by_type(self, type_):
+        return [t for t in self._transactions if t.type == type_]
