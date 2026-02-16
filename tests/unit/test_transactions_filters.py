@@ -27,3 +27,12 @@ def test_update_transaction():
     repo.update(1, amount=20)
 
     assert repo.list()[0].amount == 20
+    
+def test_delete_transaction():
+    repo = InMemoryTransactionRepository()
+    t = Transaction(1, 10, "Test", date.today(), "expense")
+    repo.add(t)
+
+    repo.delete(1)
+
+    assert len(repo.list()) == 0
