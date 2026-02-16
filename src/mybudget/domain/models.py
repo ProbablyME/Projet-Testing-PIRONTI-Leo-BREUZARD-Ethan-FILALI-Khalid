@@ -26,3 +26,21 @@ class Transaction:
 
         if self.category not in VALID_CATEGORIES:
             raise ValidationError(f"Invalid category: {self.category}")
+
+
+@dataclass
+class Budget:
+    category: str
+    amount: float
+    month: int  # 1-12
+    year: int
+
+    def __post_init__(self):
+        if self.amount <= 0:
+            raise ValidationError("Budget amount must be positive")
+
+        if self.category not in VALID_CATEGORIES:
+            raise ValidationError(f"Invalid category: {self.category}")
+
+        if self.month < 1 or self.month > 12:
+            raise ValidationError("Invalid month")

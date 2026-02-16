@@ -21,3 +21,25 @@ class InMemoryTransactionRepository:
         self._transactions = [
             t for t in self._transactions if t.id != id_
         ]
+
+
+class InMemoryBudgetRepository:
+    def __init__(self):
+        self._budgets = []
+
+    def set(self, budget):
+        # remplace si un budget existe déjà pour cette catégorie/mois/année
+        self._budgets = [
+            b for b in self._budgets
+            if not (b.category == budget.category and b.month == budget.month and b.year == budget.year)
+        ]
+        self._budgets.append(budget)
+
+    def get(self, category, month, year):
+        for b in self._budgets:
+            if b.category == category and b.month == month and b.year == year:
+                return b
+        return None
+
+    def list(self):
+        return self._budgets
