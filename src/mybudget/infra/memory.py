@@ -16,3 +16,8 @@ class InMemoryTransactionRepository:
             if t.id == id_:
                 for key, value in kwargs.items():
                     setattr(t, key, value)
+
+    def delete(self, id_):
+        self._transactions = [
+            t for t in self._transactions if t.id != id_
+        ]
