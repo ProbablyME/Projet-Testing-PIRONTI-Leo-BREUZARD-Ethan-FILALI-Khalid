@@ -23,7 +23,10 @@ def main():
     add_parser.add_argument("--date", type=str, default=None)
 
     # LIST command
-    subparsers.add_parser("list")
+    list_parser = subparsers.add_parser("list")
+    list_parser.add_argument("--category", type=str, default=None)
+    list_parser.add_argument("--from", type=str, default=None, dest="date_from")
+    list_parser.add_argument("--to", type=str, default=None, dest="date_to")
 
     # BUDGET-SET command
     bs_parser = subparsers.add_parser("budget-set")
@@ -55,6 +58,14 @@ def main():
 
     elif args.command == "list":
         transactions = repo.list()
+        if args.category:
+            transactions = [t for t in transactions if t.category == args.category]
+        if args.date_from:
+            start = date.fromisoformat(args.date_from)
+            transactions = [t for t in transactions if t.date >= start]
+        if args.date_to:
+            end = date.fromisoformat(args.date_to)
+            transactions = [t for t in transactions if t.date <= end]
         for t in transactions:
             print(t)
 

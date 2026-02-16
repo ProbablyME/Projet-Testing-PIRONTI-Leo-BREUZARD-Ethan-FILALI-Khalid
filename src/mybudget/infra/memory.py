@@ -11,6 +11,12 @@ class InMemoryTransactionRepository:
     def filter_by_type(self, type_):
         return [t for t in self._transactions if t.type == type_]
 
+    def filter_by_category(self, category):
+        return [t for t in self._transactions if t.category == category]
+
+    def filter_by_period(self, start, end):
+        return [t for t in self._transactions if start <= t.date <= end]
+
     def update(self, id_, **kwargs):
         for t in self._transactions:
             if t.id == id_:
