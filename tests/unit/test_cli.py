@@ -1,16 +1,19 @@
 import sys
 import pytest
 from unittest.mock import patch
-from mybudget.cli.app import main, repo, budget_repo
+import mybudget.infra.json_storage as storage
+import mybudget.cli.app as cli_app
+from mybudget.cli.app import main
 
 
 @pytest.fixture(autouse=True)
-def clean_repos():
-    repo._transactions.clear()
-    budget_repo._budgets.clear()
-    yield
-    repo._transactions.clear()
-    budget_repo._budgets.clear()
+def use_tmp_dir(tmp_path, monkeypatch):
+    monkeypatch.setattr(storage, "DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(storage, "TRANSACTIONS_FILE", str(tmp_path / "transactions.json"))
+    monkeypatch.setattr(storage, "BUDGETS_FILE", str(tmp_path / "budgets.json"))
+    # recréer les repos pour qu'ils utilisent le nouveau chemin
+    monkeypatch.setattr(cli_app, "repo", storage.JsonTransactionRepository())
+    monkeypatch.setattr(cli_app, "budget_repo", storage.JsonBudgetRepository())
 
 
 def test_add_transaction(capsys):
@@ -18,14 +21,14 @@ def test_add_transaction(capsys):
         main()
     output = capsys.readouterr().out
     assert "Transaction added." in output
-    assert len(repo.list()) == 1
-    assert repo.list()[0].category == "alimentation"
+    assert len(cli_app.repo.list()) == 1
+    assert cli_app.repo.list()[0].category == "alimentation"
 
 
 def test_add_transaction_default_category(capsys):
     with patch.object(sys, "argv", ["mybudget", "add", "--amount", "10", "--description", "Test", "--type", "expense"]):
         main()
-    assert repo.list()[0].category == "autre"
+    assert cli_app.repo.list()[0].category == "autre"
 
 
 def test_list_transactions(capsys):
@@ -66,7 +69,7 @@ def test_budget_set(capsys):
         main()
     output = capsys.readouterr().out
     assert "Budget set" in output
-    assert budget_repo.get("alimentation", 1, 2026) is not None
+    assert cli_app.budget_repo.get("alimentation", 1, 2026) is not None
 
 
 def test_budget_status(capsys):

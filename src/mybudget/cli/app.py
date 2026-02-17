@@ -1,12 +1,12 @@
 import argparse
-from mybudget.infra.memory import InMemoryTransactionRepository, InMemoryBudgetRepository
+from mybudget.infra.json_storage import JsonTransactionRepository, JsonBudgetRepository
 from mybudget.domain.models import Transaction, Budget
 from mybudget.services.budgets import budget_status
 from datetime import date
 
 
-repo = InMemoryTransactionRepository()
-budget_repo = InMemoryBudgetRepository()
+repo = JsonTransactionRepository()
+budget_repo = JsonBudgetRepository()
 
 
 def main():
